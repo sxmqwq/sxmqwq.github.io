@@ -108,7 +108,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </li>
 </ul>
 <p>还需考虑反子树。注意到取直径中点较大端为 $R$ 时，任意反子树不小于除整棵树外的任意子树。这能减少讨论和代码难度。</p>
-<p>对所有子树进行标号，即求 $rk$ 使得 $rk_x&amp;lt;rk_y$ 当且仅当子树 $x$ 小于子树 $y$。按最大深度分层，对于每一层用 <code class="notranslate">std::stable_sort</code> 按儿子集合排序，可以保证时间复杂度 $O(n\log n)$。</p>
+<p>对所有子树进行标号，即求 $rk$ 使得 $rk_x &amp;lt; rk_y$ 当且仅当子树 $x$ 小于子树 $y$。按最大深度分层，对于每一层用 <code class="notranslate">std::stable_sort</code> 按儿子集合排序，可以保证时间复杂度 $O(n\log n)$。</p>
 <p>考虑求 $f(x,y)$，那么 $\text{path}(x,y)$ 中的子树变为反子树。</p>
 <ul>
 <li>
@@ -134,7 +134,7 @@ $y\in[g,R]$：注意到是一段深度后缀，可 $O(1)$ 计算答案。</li>
 <p>基于求 $f$ 时的分类讨论：</p>
 <ul>
 <li>
-<p>若 $y$ 为 $X$ 祖先，可 $O(1)$ 计算 $x\in[X,y]$ 部分答案并令 $X\gets fa_y$。倍增求出 $[X,R]$ 中最深的 $rk_{x'}&amp;gt;rk_y$。</p>
+<p>若 $y$ 为 $X$ 祖先，可 $O(1)$ 计算 $x\in[X,y]$ 部分答案并令 $X\gets fa_y$。倍增求出 $[X,R]$ 中最深的 $rk_{x'} &amp;gt; rk_y$。</p>
 </li>
 <li>
 <p>$x\in[X,x')$：原倍增结果为 $x'$，可 $O(1)$ 计算答案。</p>
@@ -147,8 +147,8 @@ $y\in[g,R]$：注意到是一段深度后缀，可 $O(1)$ 计算答案。</li>
 <h2>$o_x=o_y=1$</h2>
 <p>设 $g=\text{lca}(X,Y)$，下面讨论 $x\in[X,g),y\in[Y,g)$ 的部分。其余部分 $x,y$ 为祖先后代关系，可 $O(\log n)$ 计算答案。</p>
 <p>仔细观察求 $f$ 的过程，得到如下结论：对于 $[X,g)=p_1,\dots,p_m$，记 $a_i=f(p_i,y)$，则 ${a_m}$ 形如 $w,w-1,w-2,\dots,w',w',\dots,w'$。</p>
-<p>那么先倍增将 $\forall x,f(x,y)\le r$ 和 $\forall x,f(x,y)&amp;gt;r$ 两类排除，这部分答案容易计算。</p>
-<p>对于剩下的 $y$，根据观察的链形态有 $|{x|f(x,y)\le r}|=|[X,g)|+r-f(X,y)=|[X,g)|+r-(\sum[rk_i&amp;gt;rk_y]+1+\sum_{x\in[X,g)}[rk_x\le rk_y])$。</p>
+<p>那么先倍增将 $\forall x,f(x,y)\le r$ 和 $\forall x,f(x,y) &amp;gt; r$ 两类排除，这部分答案容易计算。</p>
+<p>对于剩下的 $y$，根据观察的链形态有 $|{x|f(x,y)\le r}|=|[X,g)|+r-f(X,y)=|[X,g)|+r-(\sum[rk_i &amp;gt; rk_y]+1+\sum_{x\in[X,g)}[rk_x\le rk_y])$。</p>
 <p>预处理树上前缀和，问题转化为给定两条路径 $A,B$ 求 $\sum[rk_{x\in A}\le rk_{y\in B}]$。其中 $A$ 是到根链，将 $B$ 挂在 $A$ 处离线处理。</p>
 <p>将所有值排序后每 $L$ 个分一块，贡献分为相同块和不同块。逐块处理，对于不同块预处理两个树上前缀和即可。</p>
 <p>对于相同块，在 dfs 序二维平面上考虑问题。根据 $O(L^2)$ 个贡献点对将平面划分为 $O(L^2)$ 个等价类，二维前缀和即可，定位等价类也是简单的。</p>
