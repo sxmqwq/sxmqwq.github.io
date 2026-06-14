@@ -96,9 +96,9 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p>显然不需要记录 $S$，设包含 $0\sim i$ 的极小区间 $[l,r]$，则一个区间是否在 $S$ 中只需考虑其是否包含 $[l,r]$。</p>
 <p>有一个问题是不同的 $l,r$ 对应相同的 $S$，令 $[l,r]$ 变为包含其的 $S$ 的交 $[l',r']$ 即可。</p>
 <p>这样可以做到 $O(n^4)$ 的复杂度，考虑优化最复杂的一种转移。</p>
-<p>枚举转移到的 $[L,R]$，则选取的 $-1$ 一定是最左侧或最右侧的 $-1$。</p>
+<p>枚举转移到的 $[l',r']$，则选取的 $-1$ 一定是最内部左侧或最右侧的 $-1$。</p>
 <p>然后大力对着代码改，变成若干区间内的 $f$ 之和，二维前缀和即可。</p>
-<p>好卡常。/dk/dk/dk</p>
+<p>时间复杂度 $O(n^3)$，好卡常。/dk/dk/dk</p>
 <div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">constexpr</span> <span class="pl-k">int</span> mod=<span class="pl-c1">998244353</span>,N=<span class="pl-c1">1e3</span>+<span class="pl-c1">5</span>;
 <span class="pl-k">inline</span> <span class="pl-k">void</span> <span class="pl-en">inc</span>(<span class="pl-k">int</span> &amp;x,<span class="pl-k">int</span> y){x+=y,x-=x&gt;=mod?mod:<span class="pl-c1">0</span>;}
 <span class="pl-k">inline</span> <span class="pl-k">void</span> <span class="pl-en">dec</span>(<span class="pl-k">int</span> &amp;x,<span class="pl-k">int</span> y){x-=y,x+=x&lt;<span class="pl-c1">0</span>?mod:<span class="pl-c1">0</span>;}
