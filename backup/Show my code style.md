@@ -120,3 +120,22 @@ signed main(){
     work();rep(i,1,q)cout<<ans[i]<<'\n';
 }
 ```
+Sample 2:
+```cpp
+typedef unsigned long long ll;typedef vector<ll> Poly;typedef pair<ll,ll> pll;
+constexpr ll mod=998244353;
+namespace POLY{
+constexpr ll I2=mod+1>>1,G=3,IG=332748118;constexpr int brutemul=256;
+Poly frmod(Poly mods,ll lim){Poly res(SZ(mods));char c=getchar();while(c<'0'||'9'<c)c=getchar();while('0'<=c&&c<='9'){rep(i,0,SZ(mods)-1){res[i]=res[i]*10+c-48;while(res[i]>=lim)res[i]-=mods[i];}c=getchar();}return res;}
+void inc(ll &x,ll y){x=x+y<mod?x+y:x+y-mod;}void dec(ll &x,ll y){x=x<y?x+mod-y:x-y;}ll ksm(ll a,ll b,ll p){a%=p;ll r=1;while(b){if(b&1)r=r*a%p;a=a*a%p;b>>=1;}return r%p;}ll inv0(ll x){return ksm(x,mod-2,mod);}Poly invs={1,1};ll inv1(ll x){if(SZ(invs)<=x){ll y=SZ(invs);invs.RSZ(x+1);while(y<=x)invs[y]=(mod-mod/y)*invs[mod%y]%mod,y++;}return invs[x];}
+Poly operator * (Poly a,ll b){rep(i,0,SZ(a)-1)a[i]=a[i]*b%mod;return a;}void operator *= (Poly &a,ll b){a=a*b;}Poly operator / (Poly a,ll b){return a*inv0(b);}void operator /= (Poly &a,ll b){a=a/b;}
+Poly operator + (Poly a,Poly b){Poly c(max(SZ(a),SZ(b)));rep(i,0,SZ(a)-1)inc(c[i],a[i]);rep(i,0,SZ(b)-1)inc(c[i],b[i]);return c;}void operator += (Poly &a,Poly b){a=a+b;}Poly operator - (Poly a,Poly b){Poly c(max(SZ(a),SZ(b)));rep(i,0,SZ(a)-1)inc(c[i],a[i]);rep(i,0,SZ(b)-1)dec(c[i],b[i]);return c;}void operator -= (Poly &a,Poly b){a=a-b;}
+Poly Ntt(Poly a,int e){int n=SZ(a);vector<int>to(n);rep(i,0,n-1)to[i]=(to[i>>1]>>1)|((n>>1)*(i&1));rep(i,0,n-1)if(i<to[i])swap(a[i],a[to[i]]);for(int k=2;k<=n;k<<=1){ll g=ksm(e==1?G:IG,(mod-1)/k,mod);for(int i=0;i<n;i+=k){ll w=1;rep(j,0,(k>>1)-1){ll p=a[i|j],q=a[i|j|k>>1]*w%mod;a[i|j]=(p+q)%mod;a[i|j|k>>1]=(p+mod-q)%mod;w=w*g%mod;}}}if(e==-1){ll w=inv1(n);rep(i,0,n-1)a[i]=a[i]*w%mod;}return a;}
+Poly operator * (Poly a,Poly b){if(SZ(a)+SZ(b)<=brutemul){Poly c(SZ(a)+SZ(b)-1);rep(i,0,SZ(a)-1)rep(j,0,SZ(b)-1)inc(c[i+j],a[i]*b[j]%mod);return c;}Poly c(SZ(a)+SZ(b)-1);int k=1;while(k<=SZ(c))k<<=1;a.RSZ(k);a=Ntt(a,1);b.RSZ(k);b=Ntt(b,1);rep(i,0,k-1)a[i]=a[i]*b[i];a=Ntt(a,-1);rep(i,0,SZ(c)-1)c[i]=a[i];return c;}void operator *= (Poly &a,Poly b){a=a*b;}
+Poly Inv(Poly a){if(SZ(a)==1)return (Poly){inv0(a[0])};Poly a_=a;a_.RSZ(SZ(a)+1>>1);a_=Inv(a_);a_=((Poly){2}-a*a_)*a_;a_.RSZ(SZ(a));return a_;}Poly operator / (Poly a,Poly b){int n=max(SZ(a),SZ(b));a.RSZ(n);b.RSZ(n);a=a*Inv(b);a.RSZ(n);return a;}void operator /= (Poly &a,Poly b){a=a/b;}Poly Der(Poly a){rep(i,0,SZ(a)-2)a[i]=a[i+1]*(i+1)%mod;a[SZ(a)-1]=0;return a;}Poly Int(Poly a){per(i,SZ(a)-1,1)a[i]=a[i-1]*inv1(i)%mod;a[0]=0;return a;}
+Poly Ln(Poly a){return Int(Der(a)/a);}Poly Exp(Poly a){if(SZ(a)==1)return (Poly){1};Poly a_=a;a_.RSZ(SZ(a)+1>>1);a_=Exp(a_);a_.RSZ(SZ(a));a_=a_*(a-Ln(a_)+(Poly){1});a_.RSZ(SZ(a));return a_;}
+Poly Pow(Poly a,ll b1,ll b2){rep(i,0,SZ(a)-1)if(a[i]){Poly a_(SZ(a)-i);rep(j,i,SZ(a)-1)a_[j-i]=a[j];a_=Exp(Ln(a_/a_[0])*b1)*ksm(a_[0],b2,mod);rep(j,0,SZ(a)-1)a[j]=0;for(ll qwp=SZ(a)-1,j=i*b1;j<=qwp;j++)a[j]=a_[j-i*b1];return a;}rep(i,0,SZ(a)-1)a[i]=0;a[0]=1;return a;}
+namespace Cipolla{constexpr ll W2=(mod-1)/2;mt19937 rng(TIME);ll II;pll operator * (pll a,pll b){return {(a.first*b.first+a.second*b.second%mod*II)%mod,(a.first*b.second+a.second*b.first)%mod};}void operator *= (pll& a,pll b){a=a*b;}pll fpw(pll a,ll b){pll r={1,0};while(b){if(b&1)r*=a;a*=a;b>>=1;}return r;}ll cal(ll n){if(!n)return 0;if(ksm(n,W2,mod)!=1)return -1;ll a=rng()%mod;while(ksm((a*a-n+mod)%mod,W2,mod)==1)a=rng()%mod;II=(a*a-n+mod)%mod;ll res=fpw({a,1},I2).first;return min(res,(mod-res)%mod);}}
+Poly Sqrt(Poly a){if(SZ(a)==1){ll w=Cipolla::cal(a[0]);assert(w!=-1);return {w};}Poly a_=a;a_.RSZ(SZ(a)+1>>1);a_=Sqrt(a_);a_=(a_+a/a_)*I2;a_.RSZ(SZ(a));return a_;}
+}
+```
