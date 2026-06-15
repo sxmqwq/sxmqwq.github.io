@@ -100,7 +100,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p>那么若 Alice 先手则取得奇数位置之和，否则取得偶数位置之和。</p>
 <p>对于原问题考虑 dp。按 $b_i$ 排序，设 $f_{i,0/1,0/1}$ 表示考虑前若干种牌，有 $i$ 张牌分到第一次游戏，两次游戏已知的额外贡献次数奇偶性，时的答案。</p>
 <p>转移是显然的，时间复杂度 $O((\sum c_i)^2)$。</p>
-<p>继续观察一下，可以发现当 $c_i&amp;gt;4a_i$ 时直接给两次游戏各分 $2a_i$ 是最优策略，那么时间复杂度变为 $O((\sum a_i)^2)$。</p>
+<p>继续观察一下，可以发现每有 $4a_i$ 张牌时直接给两次游戏各分 $2a_i$ 张牌是最优的，那么时间复杂度变为 $O((\sum a_i)^2)$。</p>
 <p>大力卡常即可通过。/hsh</p>
 <div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">constexpr</span> <span class="pl-k">int</span> intinf=<span class="pl-c1">2e9</span>,N=<span class="pl-c1">2005</span>,A=<span class="pl-c1">1e4</span>+<span class="pl-c1">5</span>;
 <span class="pl-k">void</span> <span class="pl-en">cmax</span>(<span class="pl-k">int</span> &amp;x,<span class="pl-k">int</span> y){x=x&gt;y?x:y;}
