@@ -55,6 +55,9 @@ jobs:
           cp -a /opt/Gmeek/backup ${{ github.workspace }} 
           cp /opt/Gmeek/blogBase.json ${{ github.workspace }} 
           
+      - name: Preserve rhythm page
+        run: node scripts/build-rhythm.mjs
+
       - name: update html
         run: |
           git config --local user.email "$(jq -r ".email" config.json)"
