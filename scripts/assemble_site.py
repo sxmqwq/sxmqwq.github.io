@@ -14,7 +14,7 @@ BLOG = DOCS / "blog"
 ORIGIN = "https://sxmqwq.github.io"
 BLOG_HOME = ORIGIN + "/blog"
 GENERATED_ROUTE = re.compile(r"^/(?:post/.*|(?:index|tag|page\d+)\.html|(?:rss\.xml|postList\.json))$")
-NAV = '''<nav id="site-navigation" aria-label="站点导航" style="display:flex;flex-wrap:wrap;gap:16px;margin-bottom:20px;font-size:13px"><a href="/">返回主页</a><a href="/blog/">blog</a><a href="/scorem/">scorem</a><a href="/rhythm/">rhythm</a><a href="/tellshift/">Tellshift</a></nav>'''
+NAV = '''<nav id="site-navigation" aria-label="站点导航" style="margin-bottom:20px;font-size:13px"><a href="/">返回主页</a></nav>'''
 
 
 def blog_url(value):
