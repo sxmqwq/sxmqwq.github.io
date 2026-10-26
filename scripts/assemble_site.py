@@ -14,7 +14,7 @@ BLOG = DOCS / "blog"
 ORIGIN = "https://sxmqwq.github.io"
 BLOG_HOME = ORIGIN + "/blog"
 GENERATED_ROUTE = re.compile(r"^/(?:post/.*|(?:index|tag|page\d+)\.html|(?:rss\.xml|postList\.json))$")
-NAV = '''<nav id="site-navigation" aria-label="站点导航" style="display:flex;flex-wrap:wrap;gap:16px;margin-bottom:20px;font-size:13px"><a href="/">返回主页</a><a href="/blog/">Blog</a><a href="/rhythm/">rhythm</a><a href="/tellshift/">Tellshift</a><a href="/scorem/">scorem</a></nav>'''
+NAV = '''<nav id="site-navigation" aria-label="站点导航" style="display:flex;flex-wrap:wrap;gap:16px;margin-bottom:20px;font-size:13px"><a href="/">返回主页</a><a href="/blog/">blog</a><a href="/scorem/">scorem</a><a href="/rhythm/">rhythm</a><a href="/tellshift/">Tellshift</a></nav>'''
 
 
 def blog_url(value):
@@ -80,7 +80,9 @@ def assemble(source=None, metadata=None, backup=None):
             lambda m: m[1] + "=" + m[2] + blog_url(m[3]) + m[2],
             text,
         )
-        if 'id="site-navigation"' not in text:
+        if 'id="site-navigation"' in text:
+            text = re.sub(r'<nav\b[^>]*id="site-navigation"[^>]*>.*?</nav>', lambda m: NAV, text, count=1, flags=re.S)
+        else:
             text = re.sub(r"<body\b[^>]*>", lambda m: m[0] + "\n" + NAV, text, count=1)
         canonical = "/blog/" if path == BLOG / "index.html" else "/blog/" + quote(path.relative_to(BLOG).as_posix(), safe="/")
         if not re.search(r'''rel=['"]canonical['"]''', text):

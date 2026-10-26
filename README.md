@@ -4,10 +4,10 @@
 
 | 入口 | 内容 | 源码 |
 | --- | --- | --- |
-| [Blog](https://sxmqwq.github.io/blog/) | 博客、算法与题解 | 本仓库，使用 [Gmeek](https://github.com/Meekdai/Gmeek) 从 Issues 生成 |
+| [blog](https://sxmqwq.github.io/blog/) | 博客、算法与题解 | 本仓库，使用 [Gmeek](https://github.com/Meekdai/Gmeek) 从 Issues 生成 |
+| [scorem](https://sxmqwq.github.io/scorem/) | 算法竞赛评价站 | [sxmqwq/scorem](https://github.com/sxmqwq/scorem) |
 | [rhythm](https://sxmqwq.github.io/rhythm/) | 网易云歌词接龙 | [sxmqwq/rhythm](https://github.com/sxmqwq/rhythm) |
 | [Tellshift](https://sxmqwq.github.io/tellshift/) | 双向识别秘密策略的游戏 | [sxmqwq/tellshift](https://github.com/sxmqwq/tellshift) |
-| [scorem](https://sxmqwq.github.io/scorem/) | 算法竞赛评价站 | [sxmqwq/scorem](https://github.com/sxmqwq/scorem) |
 
 ## 目录
 
