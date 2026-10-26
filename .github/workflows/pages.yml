@@ -1,12 +1,16 @@
-name: Publish blog pages
+name: Publish personal site
 
 on:
   push:
     branches: [main]
     paths:
       - 'docs/**'
+      - 'home/**'
+      - scripts/assemble_site.py
+      - scripts/validate_site.py
       - '.github/workflows/pages.yml'
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
@@ -24,11 +28,19 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v7.0.1
+      - name: Checkout latest source
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: main
+      - name: Assemble portal and blog entry points
+        run: python3 scripts/assemble_site.py
+      - name: Validate site navigation and blog paths
+        run: python3 scripts/validate_site.py
       - uses: actions/configure-pages@v6.0.0
       - uses: actions/upload-pages-artifact@v5.0.0
         with:
           path: docs
-      - name: Deploy blog
+      - name: Deploy personal site
         id: deployment
         uses: actions/deploy-pages@v5.0.1
+
