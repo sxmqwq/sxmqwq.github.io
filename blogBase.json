@@ -32,6 +32,7 @@
   "subTitle": "Welcome",
   "avatarUrl": "https://raw.githubusercontent.com/sxmqwq/Images/refs/heads/main/github-blog/main/blog-avater.jpg",
   "GMEEK_VERSION": "last",
+  "homeUrl": "https://sxmqwq.github.io/blog",
   "postListJson": {
     "P1": {
       "htmlDir": "docs/blog/post/Welcome.html",
@@ -95,7 +96,6 @@
   "faviconUrl": "https://raw.githubusercontent.com/sxmqwq/Images/refs/heads/main/github-blog/main/blog-avater.jpg",
   "ogImage": "https://raw.githubusercontent.com/sxmqwq/Images/refs/heads/main/github-blog/main/blog-avater.jpg",
   "primerCSS": "<link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />",
-  "homeUrl": "https://sxmqwq.github.io/blog",
   "prevUrl": "disabled",
   "nextUrl": "disabled"
 }
