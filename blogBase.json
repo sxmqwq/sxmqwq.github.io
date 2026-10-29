@@ -73,6 +73,26 @@
       "ogImage": "https://raw.githubusercontent.com/sxmqwq/Images/refs/heads/main/github-blog/main/blog-avater.jpg",
       "createdDate": "2026-10-23",
       "dateLabelColor": "#1f883d"
+    },
+    "P9": {
+      "htmlDir": "docs/blog/post/mountain.html",
+      "labels": [
+        "Problem"
+      ],
+      "postTitle": "mountain",
+      "postUrl": "post/mountain.html",
+      "postSourceUrl": "https://github.com/sxmqwq/sxmqwq.github.io/issues/9",
+      "commentNum": 0,
+      "wordCount": 1753,
+      "description": "口胡记录，由 gpt 生成总结。",
+      "top": 0,
+      "createdAt": 1793269561,
+      "style": "",
+      "script": "<script>MathJax = {tex: {inlineMath: [[\"$\", \"$\"]]}};</script><script async src=\"https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js\"></script>",
+      "head": "",
+      "ogImage": "https://raw.githubusercontent.com/sxmqwq/Images/refs/heads/main/github-blog/main/blog-avater.jpg",
+      "createdDate": "2026-10-29",
+      "dateLabelColor": "#1f883d"
     }
   },
   "singeListJson": {},
