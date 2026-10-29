@@ -1,67 +1,86 @@
-口胡记录，由 gpt 生成总结。
+做法之后再补，先挂一个首次通过的代码，可读性不高。
 
-你的思路是把原本需要记录“已经走过的路径”的 DP，压成关键点之间的转移，再把这些转移拆成 $O(n)$ 条可以用树上差分处理的链。
-
-下面用 $B_x=d_x-h_x$，并约定根节点的 $B_1=0$。记 $\operatorname{anc}(x,k)$ 为 $x$ 深度为 $k$ 的祖先。
-
-1. **倒序考虑，找到关键点。**
-
-   倒序时，影响当前节点是否合法的，是已经确定的后缀中，所有冲刺落点的最大深度。由于正向相邻两次冲刺的落点深度严格下降，这个最大值实际上由最近的冲刺落点决定。
-
-   于是把**初始点和每次冲刺的落点**看作关键点。到达一个关键点后，之前经过的点对未来冲刺的限制都已经自动满足，因此只需要一维状态 $f_u$，表示从 $u$ 开始到达山顶的合法路径数。
-
-2. **枚举下一次休息的终点，得到 $O(n^2)$ 转移。**
-
-   从关键点 $u$ 出发，先一直向下休息到 $s$，再从 $s$ 冲刺。令
-
-   $$
-   L_s=d_s-r_s,\qquad R_s=d_s-l_s,
-   $$
-
-   以及
-
-   $$
-   M(u,s)=\min_{x\in\operatorname{path}(u,s)} B_x.
-   $$
-
-   那么冲刺落点的深度恰好可以取
-
-   $$
-   [L_s,\ \min(R_s,M(u,s)-1)].
-   $$
-
-   这些落点都是 $u$ 的严格祖先，所以 $f$ 的计算顺序是成立的。用树上前缀和求这个区间内的 $f$ 之和，再枚举 $(u,s)$，得到 $O(n^2)$ 的算法。
-
-3. **固定休息终点 $s$，看它对哪些祖先产生贡献。**
-
-   定义 $S_s(k)$ 为 $s$ 的深度不超过 $k$ 的祖先的 $f$ 之和，并令 $S_s(-1)=0$。
-
-   从 $s$ 向上走，分别找到第一个满足 $B_x\le R_s$ 的点 $A_s$，以及第一个满足 $B_x\le L_s$ 的点 $Z_s$。这里用 $(a,b]$ 表示从祖先 $a$ 到后代 $b$ 的路径，**不含 $a$、含 $b$**。
-
-   那么 $s$ 对祖先 $u$ 的贡献分成三段：
-
-   - $u\in(A_s,s]$：贡献完整区间，即 $S_s(R_s)-S_s(L_s-1)$。
-   - $u\in(Z_s,A_s]$：贡献被 $\min B$ 截断，即 $S_s(M(u,s)-1)-S_s(L_s-1)$。
-   - $u$ 在 $Z_s$ 或其上方：没有贡献。
-
-   其中完整区间的部分，以及截断区间中固定的 $-S_s(L_s-1)$，都可以转化为链上加一个固定值，用树上差分处理。
-
-4. **对剩下的 $\min$ 部分合并链。**
-
-   对每个节点 $x$，找到上方第一个满足 $B_q<B_x$ 的点 $q_x$。当 $x$ 是当前的最小值位置时，沿 $(q_x,x]$ 这一段向上走，最小值一直是 $B_x$。
-
-   把需要处理的链按当前链底存进 vector。处理到 $x$ 时，已经到链顶的链结束；其余链在当前这一段的贡献相同，可以合并计数。若共有 $c_x$ 条，当前公共段的贡献就是
-
-   $$
-   c_x\cdot S_x(B_x-1).
-   $$
-
-   之后把剩余链向 $q_x$ 合并，保留各自的链顶，用小并大维护。每个节点至多产生一条合并后的公共段，所以需要做差分的链段总数是 $O(n)$。
-
-5. **按依赖顺序计算 DP。**
-
-   每条贡献所需的前缀和，其终点都是被更新节点的严格祖先。因此可以在前缀和确定后，再将对应链段的贡献加入树上差分；按祖先先于后代的顺序计算 $f$，不会乱序。
-
-   用树状数组维护差分、用小并大合并 vector，并用倍增寻找所需祖先，整体时间复杂度为 $O(n\log n)$，空间复杂度为 $O(n\log n)$。
-
-我把这套链段转移写成了小规模原型，与暴力 DP 随机对拍了 $10\,000$ 组、$n\le 30$ 的数据，结果一致；对拍验证的是转移正确性。
+```cpp
+#include<bits/stdc++.h>
+#define rep(i,l,r) for(int qwp=(r),i=(l);i<=qwp;i++)
+#define per(i,r,l) for(int qwp=(l),i=(r);i>=qwp;i--)
+#define pb push_back
+#define fir first
+#define sec second
+using namespace std;
+typedef pair<int,int> pii;
+constexpr int mod=998244353,N=1e5+5;
+inline int red(int x){return x>=mod?x-mod:x;}
+inline void inc(int &x,int y){x=red(x+y);}
+inline void dec(int &x,int y){x=red(x+mod-y);}
+struct BIT{
+    inline int lb(int x){return x&(-x);}
+    int n,tr[N];inline void Init(int nn){rep(i,1,n=nn)tr[i]=0;}
+    inline void add(int i,int z){for(;i<=n;i+=lb(i))inc(tr[i],z);}
+    inline int ask(int i){int z=0;for(;i;i-=lb(i))inc(z,tr[i]);return z;}
+}tr;
+int n;vector<int>g[N];int fa[N],de[N],dl[N],dr[N],h[N];
+int lt[N],ltmn[N];inline int jmpde(int u,int k){while(k<de[u])u=k<=de[lt[u]]?lt[u]:fa[u];return u;}
+int Tim,Tl[N],Tr[N];void dfs(int u){Tl[u]=++Tim;for(auto v:g[u])dfs(v);Tr[u]=Tim;}
+int p1[N],p2[N];vector<int>b1[N],b2[N];
+int nx[N];vector<int>bs[N];
+vector<pii>bc[N];int wc[N],ac[N];
+int DE[N],LT[N];
+int f[N],fs[N];
+void slv(){
+    cin>>n;rep(i,1,n)g[i]=b1[i]=b2[i]=bs[i]={},bc[i]={},f[i]=wc[i]=ac[i]=0;
+    rep(i,2,n)cin>>fa[i]>>dl[i]>>dr[i]>>h[i],g[fa[i]].pb(i);
+    de[1]=1;rep(i,2,n){
+        de[i]=de[fa[i]]+1;
+        dl[i]=de[i]-dl[i],dr[i]=de[i]-dr[i],h[i]=de[i]-h[i]-1;
+        swap(dl[i],dr[i]),dr[i]=min(dr[i],h[i]);
+        if(de[fa[i]]+de[lt[lt[fa[i]]]]==de[lt[fa[i]]]<<1)
+        lt[i]=lt[lt[fa[i]]],ltmn[i]=min({h[fa[i]],ltmn[fa[i]],ltmn[lt[fa[i]]]});
+        else lt[i]=fa[i],ltmn[i]=h[fa[i]];
+        p2[i]=-1;
+        if(dl[i]<=dr[i]){
+            for(p1[i]=i;fa[p1[i]]&&dr[i]<=h[fa[p1[i]]];)
+            p1[i]=lt[p1[i]]&&dr[i]<=ltmn[p1[i]]?lt[p1[i]]:fa[p1[i]];
+            b1[p1[i]].pb(i);
+            if(dl[i]<=h[fa[p1[i]]]){
+                for(p2[i]=fa[p1[i]];fa[p2[i]]&&dl[i]<=h[fa[p2[i]]];)
+                p2[i]=lt[p2[i]]&&dl[i]<=ltmn[p2[i]]?lt[p2[i]]:fa[p2[i]];
+                b2[p2[i]].pb(i),bs[p1[i]].pb(p2[i]);
+            }
+        }
+        for(nx[i]=i;fa[nx[i]]&&h[fa[nx[i]]]>=h[i];)
+        nx[i]=lt[nx[i]]&&ltmn[nx[i]]>=h[i]?lt[nx[i]]:fa[nx[i]];
+    }
+    DE[1]=1;rep(i,2,n){
+        int x=fa[nx[i]],y=LT[x],z=LT[y];
+        DE[i]=DE[x]+1,LT[i]=DE[x]+DE[z]==DE[y]<<1?z:x;
+    }
+    rep(i,1,n)for(auto y:bs[i]){
+        ac[i]++;int x=i;while(de[nx[x]]>de[y])
+        x=LT[x]&&de[nx[LT[x]]]>de[y]?LT[x]:fa[nx[x]];
+        ac[x]--,bc[y].pb({x,1});
+    }
+    per(i,n,1)bc[nx[i]].pb({i,ac[i]}),wc[fa[nx[i]]]+=ac[i],ac[fa[nx[i]]]+=ac[i];
+    Tim=0,dfs(1),tr.Init(n),f[1]=fs[1]=1;
+    rep(i,2,n){
+        for(auto u:b1[i])tr.add(Tl[u],red(fs[jmpde(u,dr[u])]+mod-fs[jmpde(u,dl[u]-1)]));
+        for(auto u:b2[i])tr.add(Tl[fa[p1[u]]],mod-fs[jmpde(u,dl[u]-1)]);
+        for(auto u:bc[i])tr.add(Tl[fa[u.fir]],1ll*fs[jmpde(u.fir,h[u.fir])]*u.sec%mod);
+        inc(f[i],1ll*wc[i]*fs[jmpde(i,h[i])]%mod);
+        inc(f[i],red(tr.ask(Tr[i])+mod-tr.ask(Tl[i]-1)));
+        fs[i]=red(f[i]+fs[fa[i]]);
+    }
+    rep(i,2,n)cout<<f[i]<<' ';cout<<'\n';
+}
+int main(){
+    cin.tie(0)->sync_with_stdio(0);
+    int csi,T;cin>>csi>>T;while(T--)slv();
+    return 0;
+}
+/*
+ulimit -v 1048576;ulimit -s 1048576
+g++ -O2 -std=c++14 -static mountain.cpp -o %;size %;time ./% < mountain.in > mountain.out
+ulimit -s 1048576
+g++ -O2 -std=c++14 -fsanitize=address,leak,undefined mountain.cpp -o %;size %;time ./% < mountain.in > mountain.out
+*/
+```

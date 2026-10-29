@@ -74,21 +74,21 @@
       "createdDate": "2026-10-23",
       "dateLabelColor": "#1f883d"
     },
-    "P9": {
+    "P10": {
       "htmlDir": "docs/blog/post/mountain.html",
       "labels": [
         "Problem"
       ],
       "postTitle": "mountain",
       "postUrl": "post/mountain.html",
-      "postSourceUrl": "https://github.com/sxmqwq/sxmqwq.github.io/issues/9",
+      "postSourceUrl": "https://github.com/sxmqwq/sxmqwq.github.io/issues/10",
       "commentNum": 0,
-      "wordCount": 1753,
-      "description": "口胡记录，由 gpt 生成总结。",
+      "wordCount": 3409,
+      "description": "做法之后再补，先挂一个首次通过的代码，可读性不高。",
       "top": 0,
-      "createdAt": 1793269561,
+      "createdAt": 1793278815,
       "style": "",
-      "script": "<script>MathJax = {tex: {inlineMath: [[\"$\", \"$\"]]}};</script><script async src=\"https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js\"></script>",
+      "script": "",
       "head": "",
       "ogImage": "https://raw.githubusercontent.com/sxmqwq/Images/refs/heads/main/github-blog/main/blog-avater.jpg",
       "createdDate": "2026-10-29",
