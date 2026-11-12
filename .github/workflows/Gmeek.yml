@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   build:
-    name: Generate blog under /blog/
+    name: Generate blog at the domain root
     if: ${{ github.event_name != 'issues' || github.event.repository.owner.id == github.event.sender.id }}
     runs-on: ubuntu-24.04
     permissions:
@@ -45,7 +45,7 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add docs backup blogBase.json
           if ! git diff --cached --quiet; then
-            git commit -m 'Update blog under /blog/'
+            git commit -m 'Update blog'
             git push origin HEAD:main
           fi
 
@@ -56,4 +56,5 @@ jobs:
       pages: write
       id-token: write
     uses: ./.github/workflows/pages.yml
+
 

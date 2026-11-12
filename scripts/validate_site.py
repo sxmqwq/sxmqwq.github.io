@@ -5,7 +5,7 @@ import posixpath
 import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import unquote, urljoin, urlsplit
+from urllib.parse import quote, unquote, urljoin, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
@@ -38,8 +38,7 @@ def assert_local(url, current="/"):
         return
     path = unquote(absolute.path)
     path = posixpath.normpath(path)
-    if path.lstrip("/").split("/")[0] in APPS:
-        return  # These are independently deployed project repositories.
+    assert path.lstrip("/").split("/")[0] not in APPS, f"Removed app URL: {url}"
     target = DOCS / path.lstrip("/")
     if target.is_dir():
         target /= "index.html"
@@ -48,14 +47,14 @@ def assert_local(url, current="/"):
 
 def main():
     config = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
-    assert config["homeUrl"] == ORIGIN + "/blog"
-    for required in ("index.html", "404.html", "favicon.svg", ".nojekyll", "blog/index.html", "blog/tag.html", "blog/rss.xml", "blog/postList.json"):
+    assert config["homeUrl"] == ORIGIN
+    for required in ("index.html", "404.html", ".nojekyll", "tag.html", "rss.xml", "postList.json", "blog/index.html", "blog/tag.html", "blog/rss.xml", "blog/postList.json"):
         assert (DOCS / required).is_file(), f"Missing {required}"
 
     home = Page((DOCS / "index.html").read_text(encoding="utf-8"))
     assert home.canonical == [ORIGIN + "/"]
-    for destination in ("/blog/", "/rhythm/", "/tellshift/", "/scorem/"):
-        assert destination in home.links, f"Missing project entry {destination}"
+    assert not home.redirect, "The domain root must show the blog directly"
+    assert any("post/" in link for link in home.links), "No blog articles on the home page"
 
     pages = list(DOCS.rglob("*.html"))
     for file in pages:
@@ -64,38 +63,42 @@ def main():
         page = Page(text)
         for link in page.links:
             assert_local(link, "/" + relative)
+        assert 'id="site-navigation"' not in text, f"Obsolete portal navigation in {relative}"
         if relative.startswith("blog/"):
-            assert "/" in page.links, f"No portal navigation in {relative}"
-            assert len(page.canonical) == 1 and page.canonical[0].startswith(ORIGIN + "/blog/"), f"Wrong blog canonical in {relative}"
-            if relative != "blog/index.html":
-                legacy = DOCS / relative.removeprefix("blog/")
-                old = Page(legacy.read_text(encoding="utf-8"))
-                assert old.redirect, f"Legacy URL does not redirect: {legacy}"
-                assert old.canonical == page.canonical
-                assert "location.search+location.hash" in legacy.read_text(encoding="utf-8")
+            current = DOCS / relative.removeprefix("blog/")
+            actual = Page(current.read_text(encoding="utf-8"))
+            assert page.redirect, f"Legacy URL does not redirect: {relative}"
+            assert page.canonical == actual.canonical
+            assert "location.search+location.hash" in text
+        elif relative != "404.html":
+            target = "/" if relative == "index.html" else "/" + quote(relative, safe="/")
+            assert page.canonical == [ORIGIN + target], f"Wrong blog canonical in {relative}"
+            assert not page.redirect, f"Blog page unexpectedly redirects: {relative}"
 
     metadata = json.loads((ROOT / "blogBase.json").read_text(encoding="utf-8"))
     assert metadata["homeUrl"] == config["homeUrl"]
     posts = 0
     for collection in ("postListJson", "singeListJson"):
         for post in metadata.get(collection, {}).values():
-            assert post["htmlDir"].startswith("docs/blog/")
+            assert post["htmlDir"].startswith("docs/") and not post["htmlDir"].startswith("docs/blog/")
             assert (ROOT / post["htmlDir"]).is_file()
-            assert_local(post["postUrl"], "/blog/")
+            assert_local(post["postUrl"], "/")
             posts += 1
-    post_list = json.loads((DOCS / "blog/postList.json").read_text(encoding="utf-8"))
+    post_list = json.loads((DOCS / "postList.json").read_text(encoding="utf-8"))
     for post in post_list.values():
         if isinstance(post, dict) and "postUrl" in post:
-            assert_local(post["postUrl"], "/blog/")
+            assert_local(post["postUrl"], "/")
 
-    feed = ET.parse(DOCS / "blog/rss.xml")
+    feed = ET.parse(DOCS / "rss.xml")
     for node in feed.findall(".//link") + feed.findall(".//guid"):
         if node.text:
             assert node.text.startswith(config["homeUrl"]), f"Wrong RSS URL: {node.text}"
+            assert not urlsplit(node.text).path.startswith("/blog"), f"Old RSS URL: {node.text}"
             assert_local(node.text)
     assert (DOCS / "rss.xml").read_bytes() == (DOCS / "blog/rss.xml").read_bytes()
-    print(f"Validated {len(pages)} HTML pages, {posts} posts, four project entries, legacy redirects, metadata and RSS")
+    print(f"Validated {len(pages)} HTML pages, {posts} posts, root blog, legacy redirects, metadata and RSS")
 
 
 if __name__ == "__main__":
     main()
+

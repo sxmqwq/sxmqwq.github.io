@@ -1,11 +1,10 @@
-name: Publish personal site
+name: Publish blog
 
 on:
   push:
     branches: [main]
     paths:
       - 'docs/**'
-      - 'home/**'
       - scripts/assemble_site.py
       - scripts/validate_site.py
       - '.github/workflows/pages.yml'
@@ -32,7 +31,7 @@ jobs:
         uses: actions/checkout@v7.0.1
         with:
           ref: main
-      - name: Assemble portal and blog entry points
+      - name: Assemble blog and legacy redirects
         run: python3 scripts/assemble_site.py
       - name: Validate site navigation and blog paths
         run: python3 scripts/validate_site.py
@@ -40,7 +39,8 @@ jobs:
       - uses: actions/upload-pages-artifact@v5.0.0
         with:
           path: docs
-      - name: Deploy personal site
+      - name: Deploy blog
         id: deployment
         uses: actions/deploy-pages@v5.0.1
+
 

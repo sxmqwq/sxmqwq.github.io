@@ -32,10 +32,10 @@
   "subTitle": "Welcome",
   "avatarUrl": "https://raw.githubusercontent.com/sxmqwq/Images/refs/heads/main/github-blog/main/blog-avater.jpg",
   "GMEEK_VERSION": "last",
-  "homeUrl": "https://sxmqwq.github.io/blog",
+  "homeUrl": "https://sxmqwq.github.io",
   "postListJson": {
     "P1": {
-      "htmlDir": "docs/blog/post/Welcome.html",
+      "htmlDir": "docs/post/Welcome.html",
       "labels": [
         "Welcome"
       ],
@@ -55,7 +55,7 @@
       "dateLabelColor": "#1f883d"
     },
     "P8": {
-      "htmlDir": "docs/blog/post/pudding.html",
+      "htmlDir": "docs/post/pudding.html",
       "labels": [
         "Problem"
       ],
@@ -75,7 +75,7 @@
       "dateLabelColor": "#1f883d"
     },
     "P10": {
-      "htmlDir": "docs/blog/post/mountain.html",
+      "htmlDir": "docs/post/mountain.html",
       "labels": [
         "Problem"
       ],

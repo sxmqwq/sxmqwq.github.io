@@ -21,8 +21,8 @@ def main():
         raise SystemExit("GH_TOKEN is required to read the blog Issues")
     repository = os.environ.get("GITHUB_REPOSITORY", "sxmqwq/sxmqwq.github.io")
     config = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
-    if config.get("homeUrl") != "https://sxmqwq.github.io/blog":
-        raise SystemExit("config.json homeUrl must point to /blog")
+    if config.get("homeUrl") != "https://sxmqwq.github.io":
+        raise SystemExit("config.json homeUrl must point to the domain root")
     with tempfile.TemporaryDirectory(prefix="gmeek-", dir=os.environ.get("RUNNER_TEMP")) as directory:
         work = Path(directory)
         generator = work / "source"
@@ -56,3 +56,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
